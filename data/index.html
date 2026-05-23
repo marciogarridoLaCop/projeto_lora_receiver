@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>ESP32 LoRa Receiver</title>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+    header {
+      background: linear-gradient(135deg, #1e3a5f 0%, #0891b2 100%);
+      padding: 32px 20px 24px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    header h1 { font-size: 1.8rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 16px; }
+    header h1 i { margin-right: 10px; }
+    .header-meta {
+      display: flex; justify-content: center; gap: 28px;
+      flex-wrap: wrap; font-size: 0.95rem; opacity: 0.92;
+    }
+    .header-meta span { display: flex; align-items: center; gap: 7px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px; max-width: 900px; margin: 36px auto; padding: 0 20px;
+    }
+    .card {
+      background: #1e293b; border-radius: 16px; padding: 30px 20px 24px;
+      text-align: center; border: 1px solid #334155;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(0,0,0,0.45); }
+    .card .icon {
+      width: 62px; height: 62px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px; font-size: 1.6rem;
+    }
+    .card .label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1.8px; color: #94a3b8; margin-bottom: 10px; }
+    .card .value { font-size: 2.5rem; font-weight: 700; line-height: 1; }
+    .card .unit  { font-size: 1rem; color: #94a3b8; margin-top: 8px; }
+    .card-id   .icon  { background: rgba(139,92,246,0.18); color: #a78bfa; }
+    .card-id   .value { color: #a78bfa; font-size: 1.8rem; }
+    .card-temp .icon  { background: rgba(239,68,68,0.18);  color: #f87171; }
+    .card-temp .value { color: #f87171; }
+    .card-pres .icon  { background: rgba(251,191,36,0.18); color: #fbbf24; }
+    .card-pres .value { color: #fbbf24; }
+    .card-alt  .icon  { background: rgba(52,211,153,0.18); color: #34d399; }
+    .card-alt  .value { color: #34d399; }
+    footer { text-align: center; padding: 20px; color: #475569; font-size: 0.82rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><i class="fas fa-broadcast-tower"></i>ESP32 LoRa Receiver</h1>
+    <div class="header-meta">
+      <span><i class="fas fa-clock"></i><span id="timestamp">--</span></span>
+      <span><i class="fas fa-signal"></i>RSSI: <span id="rssi">--</span> dBm</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="card card-id">
+      <div class="icon"><i class="fas fa-hashtag"></i></div>
+      <div class="label">Pacote ID</div>
+      <div class="value" id="readingid">--</div>
+      <div class="unit">&nbsp;</div>
+    </div>
+    <div class="card card-temp">
+      <div class="icon"><i class="fas fa-thermometer-half"></i></div>
+      <div class="label">Temperatura</div>
+      <div class="value" id="temperature">--</div>
+      <div class="unit">&deg;C</div>
+    </div>
+    <div class="card card-pres">
+      <div class="icon"><i class="fas fa-tachometer-alt"></i></div>
+      <div class="label">Press&atilde;o</div>
+      <div class="value" id="pressure">--</div>
+      <div class="unit">Pa</div>
+    </div>
+    <div class="card card-alt">
+      <div class="icon"><i class="fas fa-mountain"></i></div>
+      <div class="label">Altitude</div>
+      <div class="value" id="altitude">--</div>
+      <div class="unit">m</div>
+    </div>
+  </div>
+
+  <footer>ESP32 LoRa &mdash; Atualiza a cada 3s</footer>
+
+<script>
+var fields = ["temperature", "altitude", "pressure", "rssi", "timestamp", "readingid"];
+
+function fetchField(name) {
+  var x = new XMLHttpRequest();
+  x.onreadystatechange = function () {
+    if (this.readyState === 4 && this.status === 200) {
+      document.getElementById(name).innerHTML = this.responseText;
+    }
+  };
+  x.open("GET", "/" + name, true);
+  x.send();
+}
+
+fields.forEach(function (v) {
+  fetchField(v);                        // fetch immediately on load
+  setInterval(fetchField, 3000, v);     // then every 3 s
+});
+</script>
+</body>
+</html>
