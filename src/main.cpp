@@ -1,8 +1,10 @@
 /*********
-  Rui Santos & Sara Santos - Random Nerd Tutorials
-  Complete project details at https://RandomNerdTutorials.com/esp32-lora-sensor-web-server/
-  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files.
-  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  * Receptor LoRa com ESP32, OLED e NTP
+  * Autor: Marcio Garrido
+  * Data: 2024-06-15
+  * 
+  * Este código implementa um receptor LoRa usando um ESP32, com um display OLED para mostrar os dados recebidos e um servidor web para acessar os dados via HTTP. 
+  * Ele também inclui um portal de configuração WiFi para facilitar a conexão à rede.
 *********/
 #include <WiFi.h>
 #include <WebServer.h>
