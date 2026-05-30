@@ -34,7 +34,7 @@
 
 // Default credentials — used only if nothing is saved in NVS
 String wifiSSID = "Quarto";
-String wifiPass  = "master1";
+String wifiPass  = "master10";
 
 WiFiUDP     ntpUDP;
 NTPClient   timeClient(ntpUDP);
