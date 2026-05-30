@@ -120,6 +120,24 @@ void startConfigPortal() {
     serveFile("/config.html", "text/html");
   });
 
+  // iOS captive portal detection — responder com "Success" faz o iPhone
+  // abrir o Safari normal em vez do Captive Portal WebView limitado
+  auto captiveOK = []() {
+    server.send(200, "text/html",
+      "<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>");
+  };
+  server.on("/hotspot-detect.html",          HTTP_GET, captiveOK);
+  server.on("/library/test/success.html",    HTTP_GET, captiveOK);
+  server.on("/success.txt",                  HTTP_GET, captiveOK);
+  server.on("/generate_204",                 HTTP_GET, captiveOK); // Android
+  server.on("/favicon.ico",                  HTTP_GET, []() { server.send(204); });
+
+  // Qualquer rota desconhecida redireciona para a página de configuração
+  server.onNotFound([]() {
+    server.sendHeader("Location", "http://192.168.4.1/");
+    server.send(302, "text/plain", "");
+  });
+
   server.on("/scan", HTTP_GET, []() {
     int n = WiFi.scanNetworks();
     String json = "[";
